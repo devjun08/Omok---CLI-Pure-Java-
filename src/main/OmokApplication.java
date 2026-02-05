@@ -17,11 +17,11 @@ public class OmokApplication {
         start
          */
         System.out.println("Hello! This is Omok Game in CLI.");
-        System.out.println("Are you Host or Geust?");
+        System.out.println("Are you Host or Guest?");
         System.out.println("---------------------------");
 
         // Waiting to user input
-        System.out.print("입력(Host/Guest): ");
+        System.out.print("Enter(Host/Guest): ");
         String playerType = sc.next();
         boolean isHost = playerType.equalsIgnoreCase("Host");
         boolean isGuest = playerType.equalsIgnoreCase("Guest");
@@ -32,7 +32,7 @@ public class OmokApplication {
 
         String targetIp = "localhost";
         if (isGuest) {
-            System.out.print("Please Enter the Host's IP Adress to connect: ");
+            System.out.print("Please Enter the Host's IP Address to connect: ");
             targetIp = sc.next();
         }
 
@@ -60,7 +60,7 @@ public class OmokApplication {
             GameEngine engine = new GameEngine(board, me, opponent);
             engine.run();
         } catch (Exception e) {
-            System.err.println("Unabel to connect: " + e.getMessage());
+            System.err.println("Unable to connect: " + e.getMessage());
             return; // unable to connect
         }
     }
