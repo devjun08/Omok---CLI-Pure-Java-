@@ -32,12 +32,17 @@ public class GameEngine {
             // Try to place
             boolean success = board.place(col, row, currentPlayer.getStoneType());
 
+            // place success
             if (success) {
-                board.render();
+                if (board.winCheck()) {
+                    System.out.println(stoneColor + " Win!");
+                    return;
+                }
 
+                board.render();
                 switchPlayer(); // switch to the next player
             } else {
-                System.out.println("Try again...");
+                System.out.println("You cannot place a stone here...");
             }
 
         }
