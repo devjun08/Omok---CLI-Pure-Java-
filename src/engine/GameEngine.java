@@ -1,20 +1,25 @@
 package engine;
 
 import board.Board;
+import network.NetworkManager;
+import player.LocalPlayer;
 import player.Player;
 
 public class GameEngine {
     private final Board board;
     private final Player blackPlayer;
     private final Player whitePlayer;
+    private final NetworkManager nm;
     private Player currentPlayer;
 
-    public GameEngine(Board board, Player p1, Player p2) {
+    public GameEngine(Board board, Player p1, Player p2, NetworkManager nm) {
         this.board = board;
         this.blackPlayer = p1;
         this.whitePlayer = p2;
+        this.nm = nm;
         currentPlayer = blackPlayer;
     }
+
 
     public void run() {
         System.out.println("Game Start!");
@@ -34,7 +39,14 @@ public class GameEngine {
 
             // place success
             if (success) {
+                // if currentPlayer == LocalPlayer
+                if (currentPlayer instanceof LocalPlayer) {
+                    nm.send(col + "," + row);
+                }
+
+                // Win check Logic
                 if (board.winCheck()) {
+                    board.render();
                     System.out.println(stoneColor + " Win!");
                     return;
                 }
