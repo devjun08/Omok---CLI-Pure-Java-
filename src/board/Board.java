@@ -27,6 +27,7 @@ public class Board {
         return true;
     }
 
+    // TODO: o(n^4) Optimize algorithm performance
     public boolean winCheck() {
         for (int r = 0; r < 15; r++) {
             for (int c = 0; c < 15; c++) {
@@ -49,6 +50,7 @@ public class Board {
             int nr = r + dr[i]; // 기준점(r, c)에서 해당 방향으로 한 칸 이동한 좌표로 초기화
             int nc = c + dc[i];
 
+            // TODO: convert to for-loop
             while (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE && map[nr][nc] == targetStone) {
                 count++;
                 if (count == 5) return 5; // 5개 찾으면 즉시 리턴
