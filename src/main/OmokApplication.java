@@ -45,13 +45,14 @@ public class OmokApplication {
         /*
         Player Interface Declare
          */
-        Player me = new LocalPlayer(isHost ? 2 : 1);
-        Player opponent = new RemotePlayer(networkManager);
+        Player me = new LocalPlayer(isHost ? 1 : 2);
+        //Player opponent = new RemotePlayer(networkManager);
+        Player opponent = new LocalPlayer(isHost ? 2 : 1);
 
         // test
-        int coordinate[] = me.getNextMove(board);
-        board.place(coordinate[0], coordinate[1], 1);
-        board.render();
+//        int coordinate[] = me.getNextMove(board);
+//        board.place(coordinate[0], coordinate[1], 1);
+//        board.render();
 
         /*
         Attempt to connect
@@ -62,8 +63,8 @@ public class OmokApplication {
             System.out.println("Connection succesful!");
 
 
-            // GameEngine engine = new GameEngine(board, me, opponent);
-            // engine.run();
+            GameEngine engine = new GameEngine(board, me, opponent);
+            engine.run();
         } catch (Exception e) {
             System.err.println("Unable to connect: " + e.getMessage());
             return; // unable to connect
