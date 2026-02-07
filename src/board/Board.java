@@ -5,15 +5,60 @@ public class Board {
     private final int[][] map = new int[SIZE][SIZE];
 
     // Board.java
-    public boolean place(int c, int r, int stoneType) {
-        c = c - 'A';
-        r = r - 1;
+    public boolean place(int col, int row, int stoneType) {
+        // coordinate transformation
+        col = col - 'A';
+        row = row - 1;
 
-        if (r < 0 || r >= SIZE || c < 0 || c >= SIZE || map[r][c] != 0) {
+        // move validation
+        if (!moveValidation(row, col)) {
             return false;
-        }
-        map[r][c] = stoneType;
+        };
+
+        map[row][col] = stoneType;
         return true;
+    }
+
+    // move validation
+    public boolean moveValidation(int row, int col) {
+        if (row < 0 || row >= SIZE || col < 0 || col >= SIZE || map[row][col] != 0) return false;
+        if (map[row][col] == 1 || map[row][col] == 2) return false;
+
+        return true;
+    }
+
+    public boolean winCheck() {
+        for (int r = 0; r < 15; r++) {
+            for (int c = 0; c < 15; c++) {
+                if (map[r][c] == 1 || map[r][c] == 2) {
+                    if (isFive(r, c) == 5) return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public int isFive(int r, int c) {
+        int dr[] = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int dc[] = {0, -1, 1, -1, 1, 0, -1, 1};
+        int targetStone = map[r][c];
+
+        for (int i = 0; i < 8; i++) {
+            int count = 1; // 방향이 바뀔 때마다 다시 1개부터 세기
+            int nr = r + dr[i]; // 기준점(r, c)에서 해당 방향으로 한 칸 이동한 좌표로 초기화
+            int nc = c + dc[i];
+
+            while (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE && map[nr][nc] == targetStone) {
+                count++;
+                if (count == 5) return 5; // 5개 찾으면 즉시 리턴
+
+                // 같은 방향으로 한 칸 더 전진
+                nr += dr[i];
+                nc += dc[i];
+            }
+        }
+        return 1;
     }
 
     public void render() {
