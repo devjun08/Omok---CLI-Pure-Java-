@@ -3,23 +3,33 @@ package network;
 import java.io.*;
 import java.net.*;
 
+/**
+ * TCP 소켓을 이용한 네트워크 통신을 관리하는 클래스입니다.
+ * 서버(Host) 모드와 클라이언트(Guest) 모드를 모두 지원합니다.
+ */
 public class NetworkManager {
     private Socket socket;
     private BufferedReader reader;
     private PrintWriter writer;
-    private ServerSocket serverSocket; // 자원 정리를 위해 필드로 승격
+    private ServerSocket serverSocket;
 
-    private boolean isHost;
-    private String targetIp;
-    private final int PORT = 5001; // 포트 번호를 상수로 고정 (둘이 약속한 통로)
+    private final boolean isHost;
+    private final String targetIp;
+    private final int PORT = 5001; // 통신에 사용할 고정 포트 번호
 
-    // 1. OmokApplication에서 사용하는 생성자 추가
+    /**
+     * @param isHost Host(서버) 여부
+     * @param targetIp Guest인 경우 접속할 Host의 IP 주소
+     */
     public NetworkManager(boolean isHost, String targetIp) {
         this.isHost = isHost;
         this.targetIp = targetIp;
     }
 
-    // 2. OmokApplication에서 호출하는 통 통합 연결 메서드
+    /**
+     * 설정된 모드에 따라 네트워크 연결을 시도합니다.
+     * @throws IOException 연결 중 오류 발생 시
+     */
     public void connect() throws IOException {
         if (isHost) {
             startAsServer(PORT);
@@ -28,7 +38,7 @@ public class NetworkManager {
         }
     }
 
-    // 서버 모드 (내부에서만 쓰이므로 private으로 변경 가능)
+    /** 서버 모드로 실행하여 Guest의 접속을 기다립니다. */
     private void startAsServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         serverSocket.setReuseAddress(true);
@@ -38,7 +48,7 @@ public class NetworkManager {
         setupStreams();
     }
 
-    // 클라이언트 모드
+    /** 클라이언트 모드로 실행하여 Host에 접속합니다. */
     private void startAsClient(String ip, int port) throws IOException {
         System.out.println("Guest: Host(" + ip + ")에게 연결 시도 중...");
         this.socket = new Socket(ip, port);
@@ -46,19 +56,23 @@ public class NetworkManager {
         setupStreams();
     }
 
+    /** 입출력 스트림을 설정합니다. */
     private void setupStreams() throws IOException {
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true);
     }
 
+    /** 문자열 메시지를 상대방에게 전송합니다. */
     public void send(String message) {
         if (writer != null) writer.println(message);
     }
 
+    /** 상대방이 보낸 문자열 메시지를 수신할 때까지 대기합니다. */
     public String receive() throws IOException {
         return (reader != null) ? reader.readLine() : null;
     }
 
+    /** 소켓 및 스트림 자원을 해제합니다. */
     public void close() {
         try {
             if (reader != null) reader.close();
@@ -66,7 +80,7 @@ public class NetworkManager {
             if (socket != null) socket.close();
             if (serverSocket != null) serverSocket.close();
         } catch (IOException e) {
-            System.err.println("Cleanup error: " + e.getMessage());
+            System.err.println("자원 해제 중 오류 발생: " + e.getMessage());
         }
     }
 }
